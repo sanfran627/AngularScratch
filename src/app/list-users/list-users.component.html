@@ -1,0 +1,27 @@
+<h1>User Listing</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+<p *ngIf="!users && !error"><em>Loading...</em></p>
+<p *ngIf="error"><em>{{error}}</em></p>
+
+<table class='table table-striped' *ngIf="users">
+  <thead>
+    <tr>
+      <th>User Id</th>
+      <th>First</th>
+      <th>Last</th>
+      <th>Title</th>
+      <th>Age</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.userId }}</td>
+      <td>{{ user.firstName }}</td>
+      <td>{{ user.lastName }}</td>
+      <td>{{ user.title }}</td>
+      <td>{{ user.age }}</td>
+    </tr>
+  </tbody>
+</table>
