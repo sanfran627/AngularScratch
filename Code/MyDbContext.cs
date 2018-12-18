@@ -1,7 +1,8 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System.Linq;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace AngularScratch
 {
@@ -11,6 +12,7 @@ namespace AngularScratch
 
     public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
 
+    //manually mapping entities.. Can't stand generated code
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       var userBuilder = modelBuilder.Entity<User>(entity =>
@@ -23,14 +25,14 @@ namespace AngularScratch
         entity.HasKey(c => c.UserId);
       });
     }
-  }
 
-  public class User
-  {
-    public Guid UserId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public DateTime DOB { get; set; }
-    public string Title { get; set; }
+    //Example of SP support in EF.. Not pretty
+    public async Task<(bool found, User user)> TryGetUserByIdUsingSP(Guid userId)
+    {
+      var param = new SqlParameter("@userId", SqlDbType.UniqueIdentifier) { Value = userId };
+      var users = this.User.FromSql($"GetUser @userId", param);
+      var user = await users.FirstOrDefaultAsync();
+      return (user != null, user);
+    }
   }
 }
